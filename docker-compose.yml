@@ -14,7 +14,7 @@ services:
     image: mariadb:11.3-jammy
     security_opt:
       - no-new-privileges:true
-    user: 1040:65540
+    user: "$UID:$GID"
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
     volumes:
       - ./data/db:/var/lib/mysql:rw
@@ -28,7 +28,7 @@ services:
 
   redis:
     image: redis
-    user: 1040:65540
+    user: "$UID:$GID"
     healthcheck:
      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
     volumes:
