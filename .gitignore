@@ -1,0 +1,16 @@
+.env
+
+data/db/*
+!data/db/.gitkeep
+
+data/nextcloud/config/*
+!data/nextcloud/config/.gitkeep
+data/nextcloud/custom_apps/*
+!data/nextcloud/custom_apps/.gitkeep
+data/nextcloud/html/*
+!data/nextcloud/html/.gitkeep
+data/nextcloud/themes/*
+!data/nextcloud/themes/.gitkeep
+
+data/redis/*
+!data/redis/.gitkeep

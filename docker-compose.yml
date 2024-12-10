@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  collabora:
+    container_name: collabora
+    image: collabora/code:latest
+    restart: unless-stopped
+    ports:
+      - '9980:9980'
+    environment:
+      extra_params: '--o:security.seccomp=false --o:ssl.enable=false --o:ssl.termination=true'
+
+  db:
+    image: mariadb:11.3-jammy
+    security_opt:
+      - no-new-privileges:true
+    user: 1040:65540
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
+    volumes:
+      - ./data/db:/var/lib/mysql:rw
+      - ./data/db:/etc/mysql/conf.d:rw
+    environment:
+      TZ: Europe/London
+    env_file: .env
+    ports:
+      - '3306:3306'
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    user: 1040:65540
+    healthcheck:
+     test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+    volumes:
+      - ./data/redis:/data:rw
+    environment:
+      TZ: Europe/London
+    restart: unless-stopped
+
+  nextcloud:
+    ports:
+      - 8080:80
+    depends_on:
+      db:
+       condition: service_started
+      redis:
+       condition: service_healthy
+    environment:
+      REDIS_HOST: redis
+      # OVERWRITEPROTOCOL: https
+      MYSQL_HOST: db
+    env_file: .env
+    healthcheck:
+     test: curl -f http://localhost:80/ || exit 1
+    volumes:
+      - ./data/nextcloud/html:/var/www/html:rw
+      - ./data/nextcloud/custom_apps:/var/www/html/custom_apps:rw
+      - ./data/nextcloud/config:/var/www/html/config:rw
+      - ./data/nextcloud/themes:/var/www/html/themes:rw
+      - /mnt/Nextcloud/data:/var/www/html/data:rw
+    image: milux/nextcloud:29
+    restart: unless-stopped
+
+  cron:
+   image: nextcloud:apache
+   restart: always
+   volumes:
+     - ./data/nextcloud/config:/var/www/html/config:rw
+     - ./data/nextcloud/html:/var/www/html:rw
+     - ./data/nextcloud/custom_apps:/var/www/html/custom_apps:rw
+     - /mnt/Nextcloud/data:/var/www/html/data:rw
+   entrypoint: /cron.sh
+   depends_on:
+    db:
+       condition: service_started
+    redis:
+       condition: service_started
