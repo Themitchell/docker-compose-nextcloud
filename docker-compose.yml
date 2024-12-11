@@ -22,8 +22,6 @@ services:
     environment:
       TZ: Europe/London
     env_file: .env
-    ports:
-      - '3306:3306'
     restart: unless-stopped
 
   redis:
