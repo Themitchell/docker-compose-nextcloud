@@ -55,7 +55,7 @@ services:
       - ./data/nextcloud/custom_apps:/var/www/html/custom_apps:rw
       - ./data/nextcloud/config:/var/www/html/config:rw
       - ./data/nextcloud/themes:/var/www/html/themes:rw
-      - /mnt/Nextcloud/data:/var/www/html/data:rw
+      - /mnt/Nextcloud:/var/www/html/data:rw
     image: milux/nextcloud:29
     restart: unless-stopped
 
