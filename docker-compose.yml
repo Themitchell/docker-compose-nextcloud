@@ -47,6 +47,8 @@ services:
       REDIS_HOST: redis
       # OVERWRITEPROTOCOL: https
       MYSQL_HOST: db
+      PHP_MEMORY_LIMIT: 10G
+      PHP_UPLOAD_LIMIT: 15G
     env_file: .env
     healthcheck:
      test: curl -f http://localhost:80/ || exit 1
@@ -66,7 +68,7 @@ services:
      - ./data/nextcloud/config:/var/www/html/config:rw
      - ./data/nextcloud/html:/var/www/html:rw
      - ./data/nextcloud/custom_apps:/var/www/html/custom_apps:rw
-     - /mnt/Nextcloud/data:/var/www/html/data:rw
+     - /mnt/Nextcloud:/var/www/html/data:rw
    entrypoint: /cron.sh
    depends_on:
     db:
