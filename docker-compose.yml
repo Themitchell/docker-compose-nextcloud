@@ -1,5 +1,4 @@
-version: '3'
-
+---
 services:
   collabora:
     container_name: collabora
@@ -48,8 +47,6 @@ services:
       REDIS_HOST: redis
       # OVERWRITEPROTOCOL: https
       MYSQL_HOST: db
-      PHP_MEMORY_LIMIT: 10G
-      PHP_UPLOAD_LIMIT: 15G
     env_file: .env
     healthcheck:
      test: curl -f http://localhost:80/ || exit 1
